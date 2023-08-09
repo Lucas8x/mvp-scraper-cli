@@ -1,0 +1,6 @@
+{
+  "code-runner.executorMap": {
+    "typescript": "npx tsnd --transpile-only"
+  },
+  "cSpell.words": ["dbname", "mapname", "mvps"]
+}

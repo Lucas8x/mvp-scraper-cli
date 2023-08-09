@@ -1,0 +1,12 @@
+import 'dotenv/config';
+
+const {
+  DIVINE_PRIDE_API_KEY,
+  NO_ICONS,
+  NO_ANIMATED_SPRITES,
+  NO_MAP_IMAGES,
+  USE_FILTER,
+  IGNORE_MVP_WITH_EMPTY_MAPS,
+  DESIRED_STATS,
+  OUTPUT_PATH,
+} = process.env;
