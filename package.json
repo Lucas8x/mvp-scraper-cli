@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "extract mvp info from divinepride",
   "main": "build/src/index.js",
+  "type": "module",
   "scripts": {
-    "start": "node build/src/index.js",
-    "cli": "tsnd --transpile-only src/index.ts",
+    "start": "node --es-module-specifier-resolution=node --no-warnings build/src/index.js",
+    "cli": "tsx watch src/index.ts",
     "build": "npx tsc"
   },
   "bin": {
@@ -24,7 +25,7 @@
     "chalk": "^5.2.0",
     "cheerio": "^1.0.0-rc.12",
     "commander": "^11.0.0",
-    "divine-pride-api-wrapper": "^0.1.6",
+    "divine-pride-api-wrapper": "^0.1.10",
     "dotenv": "^16.3.0",
     "nanospinner": "^1.1.0",
     "prompts": "^2.4.2"
@@ -34,7 +35,7 @@
     "@types/prompts": "^2.4.4",
     "eslint": "^8.43.0",
     "prettier": "^2.8.8",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^3.12.7",
     "typescript": "^5.1.3"
   },
   "keywords": [
