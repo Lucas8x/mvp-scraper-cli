@@ -1,15 +1,13 @@
-import prompts, { PromptObject } from 'prompts';
-import Commander from 'commander';
-import { cwd } from 'node:process';
+import { Command } from 'commander';
 import path from 'node:path';
+import { cwd } from 'node:process';
+import prompts, { PromptObject } from 'prompts';
 
+import packageJson from '../package.json' assert { type: 'json' };
 import { Extractor } from './extractor';
-
-import packageJson from '../package.json';
+import type { ExtractorConfig } from './types';
 
 let outputPath: string = '';
-
-interface Options {}
 
 async function interactiveCLI() {
   const questions: PromptObject[] = [
@@ -78,7 +76,7 @@ async function interactiveCLI() {
 }
 
 function cli() {
-  const program = new Commander.Command(packageJson.name)
+  const program = new Command(packageJson.name)
     .version(packageJson.version)
     .option('-o, --output', 'Download sprites')
     .option('--sprites', 'Download sprites')
@@ -88,15 +86,32 @@ function cli() {
     .parse(process.argv);
 }
 
-async function init(options: Options) {
-  const extractor = new Extractor('');
+async function init(options: ExtractorConfig) {
+  const {
+    divinePrideApiKey,
+    downloadSprites,
+    downloadAnimatedSprites,
+    downloadMapImages,
+    ignoreEmptySpawns,
+    useFilter,
+    desiredStats,
+  } = options;
+  const extractor = new Extractor(
+    divinePrideApiKey,
+    downloadSprites,
+    downloadAnimatedSprites,
+    downloadMapImages,
+    ignoreEmptySpawns,
+    useFilter,
+    desiredStats
+  );
   //await extractor.extract();
 }
 
-async function main() {
+export async function main() {
   const hasArgs = process.argv.length > 2;
   const options = hasArgs ? cli() : await interactiveCLI();
-  init({});
+  //init({});
 }
 
 main();

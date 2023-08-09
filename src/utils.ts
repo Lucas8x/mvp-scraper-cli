@@ -39,9 +39,3 @@ export function extractIdsFromHtml(html: string): string[] {
     return [];
   }
 }
-
-export async function saveJSON(path: fs.PathOrFileDescriptor, data: any) {
-  fs.writeFile(path, JSON.stringify(data, null, 2), 'utf8', (err) => {
-    if (err) throw err;
-  });
-}

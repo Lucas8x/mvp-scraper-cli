@@ -1,7 +1,12 @@
-import DivinePride from 'divine-pride-api-wrapper';
+import DivinePride, {
+  GetMonsterResponse,
+  Stats,
+} from 'divine-pride-api-wrapper';
 import { createSpinner } from 'nanospinner';
 import cluster from 'node:cluster';
+import { PathLike } from 'node:fs';
 import { availableParallelism } from 'node:os';
+import path from 'path';
 import { exit } from 'process';
 
 import {
@@ -11,11 +16,13 @@ import {
 } from './download';
 import { FailedGetMvpData, NoHtmlPage } from './errors';
 import { filterMvp } from './filter';
-import { extractIdsFromHtml, fetchListPageHtml, saveJSON } from './utils';
+import { isWriteable, saveJSON } from './helpers';
+import type { ExtractorConfig } from './types';
+import { extractIdsFromHtml, fetchListPageHtml } from './utils';
 
 const numCPUs = availableParallelism();
 
-class Extractor {
+export class Extractor {
   private api: DivinePride;
 
   constructor(
@@ -25,19 +32,23 @@ class Extractor {
     private downloadMapImages = false,
     private ignoreEmptySpawns = false,
     private useFilter = false,
-    private desiredStats = []
+    private desiredStats = [] as Partial<Stats>
   ) {
     if (!divinePrideApiKey) {
       console.error('Divine pride api not found, aborting...');
       exit(1);
     }
-    this.api = new DivinePride(this.divinePrideApiKey);
+    this.api = new DivinePride(divinePrideApiKey);
   }
 
-  async getMvpData(id: number) {
+  async getMvpData(
+    id: number
+  ): Promise<Partial<GetMonsterResponse> | undefined> {
     try {
       let data = await this.api.getMonster(id);
-      if (!data || (this.ignoreEmptySpawns && !data.spawn.length)) return null;
+      if (!data || (this.ignoreEmptySpawns && !data.spawn.length)) {
+        return;
+      }
 
       if (this.useFilter) {
         // @ts-ignore
@@ -103,24 +114,49 @@ class Extractor {
     }
   }
 
-  async extract(outputPath) {
+  async extract(outputPath: string) {
+    const spinner = createSpinner('Extracting mvp...').start();
+
     try {
-      if (!outputPath) throw new Error('No output path provided');
+      if (!outputPath) {
+        throw new Error('No output path provided');
+      }
 
       if (typeof outputPath === 'string') {
         outputPath = outputPath.trim();
       }
 
+      const root = path.resolve(outputPath);
+
+      if (!(await isWriteable(path.dirname(root)))) {
+        console.error('The output path is not writable.');
+        exit(1);
+      }
+
       const ids = await this.getAllMvpIds();
-      const mvpsData = [];
+      if (!ids || ids.length === 0) {
+        throw new Error('No mvp ids');
+      }
+
+      const mvpsData: Array<Partial<GetMonsterResponse>> = [];
+      for (const id of ids) {
+        const data = await this.getMvpData(Number(id));
+        if (!data) {
+          continue;
+        }
+        mvpsData.push(data);
+      }
+
+      //await saveJSON('', mvpsData);
     } catch (error) {
-      throw error;
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Unknown error on extracting mvps.';
+
+      spinner.error({
+        text: errorMessage,
+      });
     }
   }
 }
-
-export { Extractor };
-export default Extractor;
-
-const x = new Extractor('123');
-x.extract('');

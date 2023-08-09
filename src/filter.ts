@@ -2,7 +2,7 @@ import type {
   GetMonsterResponse,
   Spawn,
   Stats,
-} from 'divine-pride-api-wrapper/build/types';
+} from 'divine-pride-api-wrapper';
 
 function filterMaps(maps: Spawn[]): Array<Partial<Spawn | undefined>> {
   return maps.map(({ mapname, respawnTime }) => {

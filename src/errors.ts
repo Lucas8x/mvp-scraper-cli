@@ -12,6 +12,13 @@ export class FailedGetMvpData extends Error {
   }
 }
 
+export class NoImageData extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'NoImageData';
+  }
+}
+
 export class FailedSpriteDownload extends Error {
   constructor(message: string) {
     super(message);

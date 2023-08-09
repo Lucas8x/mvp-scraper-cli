@@ -1,7 +1,9 @@
 import fs from 'fs';
 import path from 'path';
+
 import { axiosInstance } from './axios';
 import {
+  NoImageData,
   FailedAnimatedSpriteDownload,
   FailedMapImageDownload,
   FailedSpriteDownload,
@@ -9,7 +11,14 @@ import {
 
 async function downloadImage(url: string, path) {
   try {
-    const { data } = await axiosInstance.get(url);
+    const { data } = await axiosInstance.get(
+      url /* , {responseType: 'arraybuffer'} */
+    );
+
+    if (data.length === 0) {
+      throw new NoImageData(`${url} has no image data.`);
+    }
+
     const image = Buffer.from(data, 'binary');
     fs.writeFileSync(path, image);
   } catch (error) {
