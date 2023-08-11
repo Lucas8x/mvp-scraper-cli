@@ -2,5 +2,5 @@
   "code-runner.executorMap": {
     "typescript": "npx tsx"
   },
-  "cSpell.words": ["dbname", "mapname", "mvps"]
+  "cSpell.words": ["dbname", "mapname", "mvps", "nanospinner"]
 }
