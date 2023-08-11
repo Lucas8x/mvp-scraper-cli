@@ -4,11 +4,10 @@ import DivinePride, {
 } from 'divine-pride-api-wrapper';
 import { createSpinner } from 'nanospinner';
 import cluster from 'node:cluster';
-import { PathLike } from 'node:fs';
 import { availableParallelism } from 'node:os';
 import path from 'path';
-import { exit } from 'process';
 
+import { constants } from './constants';
 import {
   downloadAnimatedMvpSprite,
   downloadMapImages,
@@ -16,7 +15,7 @@ import {
 } from './download';
 import { FailedGetMvpData, NoHtmlPage } from './errors';
 import { filterMvp } from './filter';
-import { isWriteable, saveJSON } from './helpers';
+import { makeDir, saveJSON } from './helpers';
 import type { ExtractorConfig } from './types';
 import { extractIdsFromHtml, fetchListPageHtml } from './utils';
 
@@ -36,12 +35,12 @@ export class Extractor {
   ) {
     if (!divinePrideApiKey) {
       console.error('Divine pride api not found, aborting...');
-      exit(1);
+      process.exit(1);
     }
     this.api = new DivinePride(divinePrideApiKey);
   }
 
-  async getMvpData(
+  private async getMvpData(
     id: number
   ): Promise<Partial<GetMonsterResponse> | undefined> {
     try {
@@ -55,34 +54,18 @@ export class Extractor {
         data = filterMvp(data);
       }
 
-      if (this.downloadSprites) {
-        await downloadMvpSprite(id);
-      }
-
-      if (this.downloadAnimatedSprites) {
-        await downloadAnimatedMvpSprite(id);
-      }
-
-      if (this.downloadMapImages) {
-        for (const i of data.spawn) {
-          await downloadMapImages(i.mapname);
-        }
-      }
-
       return data;
     } catch (error) {
       throw new FailedGetMvpData(String(error));
     }
   }
 
-  async getAllMvpIds(): Promise<string[] | undefined> {
+  private async getAllMvpIds(): Promise<string[] | undefined> {
     const spinner = createSpinner('Getting mvp ids...').start();
 
     try {
       let ids: string[] = [];
       const totalPages = 2; //TODO: detect on page
-
-      await new Promise((r) => setTimeout(r, 2000));
 
       for (let i = 1; i <= totalPages; i++) {
         const pageHtml = await fetchListPageHtml(i);
@@ -114,9 +97,125 @@ export class Extractor {
     }
   }
 
-  async extract(outputPath: string) {
-    const spinner = createSpinner('Extracting mvp...').start();
+  /**
+   * Start the process of extracting mvps data,images.
+   * @param {string} finalPath - where the output folder will be created
+   * @memberof Extractor
+   */
+  private async extract(finalPath: string) {
+    const spinner = createSpinner('Extracting mvps...').start();
 
+    try {
+      const ids = await this.getAllMvpIds();
+      const idsLength = ids?.length;
+      if (!ids || idsLength === 0) {
+        throw new Error('No mvp ids');
+      }
+
+      const mvpsData: Array<Partial<GetMonsterResponse>> = [];
+      for (const [index, id] of ids.entries()) {
+        const data = await this.getMvpData(Number(id));
+        if (!data) {
+          continue;
+        }
+        spinner.update({
+          text: `[${index + 1}/${idsLength}] Extracting mvps...`,
+        });
+        mvpsData.push(data);
+      }
+
+      const jsonPath = path.join(finalPath, constants.jsonFile);
+      saveJSON(jsonPath, mvpsData);
+
+      spinner.success({
+        text: 'Successfully extracted mvps',
+      });
+
+      const mvpsLength = mvpsData.length;
+      const mvpsEntries = mvpsData.entries();
+
+      if (this.downloadSprites) {
+        const spinner = createSpinner(
+          `[0/${mvpsLength}] Downloading Sprites...`
+        ).start();
+
+        for (const [index, { id }] of mvpsEntries) {
+          if (id) {
+            await downloadMvpSprite(id, finalPath);
+            spinner.update({
+              text: `[${index + 1}/${mvpsLength}] Downloading Sprites...`,
+            });
+          }
+        }
+
+        spinner.success({
+          text: 'Successfully Downloaded Sprites.',
+        });
+      }
+
+      if (this.downloadAnimatedSprites) {
+        const spinner = createSpinner(
+          `[0/${mvpsLength}] Downloading Animated Sprites...`
+        ).start();
+
+        for (const [index, { id }] of mvpsEntries) {
+          if (id) {
+            await downloadAnimatedMvpSprite(id, finalPath);
+            spinner.update({
+              text: `[${
+                index + 1
+              }/${mvpsLength}] Downloading Animated Sprites...`,
+            });
+          }
+        }
+
+        spinner.success({
+          text: 'Successfully Downloaded Animated Sprites.',
+        });
+      }
+
+      if (this.downloadMapImages) {
+        const mapsImages = mvpsData
+          .flatMap(({ spawn }) => spawn ?? [])
+          .map(({ mapname }) => mapname);
+
+        const mapsLength = mapsImages.length;
+
+        const spinner = createSpinner(
+          `[0/${mapsLength}] Downloading Map images...`
+        ).start();
+
+        for (const [index, mapname] of mapsImages) {
+          spinner.update({
+            text: `[${index}/${mapsLength}] Downloading Map images...`,
+          });
+          if (mapname) {
+            await downloadMapImages(mapname, finalPath);
+          }
+        }
+
+        spinner.success({
+          text: 'Successfully Downloaded Map Images.',
+        });
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Unknown error on extracting mvps.';
+
+      spinner.error({
+        text: errorMessage,
+      });
+    }
+  }
+
+  /**
+   * Create folders, transform paths then start extraction process.
+   * @param {string} outputPath - where the output folder will be created
+   * @memberof Extractor
+   */
+  async init(outputPath: string) {
     try {
       if (!outputPath) {
         throw new Error('No output path provided');
@@ -127,36 +226,24 @@ export class Extractor {
       }
 
       const root = path.resolve(outputPath);
+      const finalPath = path.join(root, constants.outputFolder);
 
-      if (!(await isWriteable(path.dirname(root)))) {
-        console.error('The output path is not writable.');
-        exit(1);
+      await makeDir(finalPath);
+
+      if (this.downloadSprites) {
+        await makeDir(path.join(finalPath, constants.spritesFolder));
+      }
+      if (this.downloadAnimatedSprites) {
+        await makeDir(path.join(finalPath, constants.animatedSpritesFolder));
+      }
+      if (this.downloadMapImages) {
+        await makeDir(path.join(finalPath, constants.mapsFolder));
       }
 
-      const ids = await this.getAllMvpIds();
-      if (!ids || ids.length === 0) {
-        throw new Error('No mvp ids');
-      }
-
-      const mvpsData: Array<Partial<GetMonsterResponse>> = [];
-      for (const id of ids) {
-        const data = await this.getMvpData(Number(id));
-        if (!data) {
-          continue;
-        }
-        mvpsData.push(data);
-      }
-
-      //await saveJSON('', mvpsData);
+      this.extract(finalPath);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Unknown error on extracting mvps.';
-
-      spinner.error({
-        text: errorMessage,
-      });
+      console.error(error);
+      process.exit(1);
     }
   }
 }

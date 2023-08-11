@@ -1,17 +1,26 @@
 import fs from 'fs';
 
-export async function saveJSON(path: fs.PathOrFileDescriptor, data: any) {
+export function saveJSON(directory: string, data: any) {
   const stringifiedData = JSON.stringify(data, null, 2);
-  fs.writeFile(path, stringifiedData, 'utf8', (err) => {
+  fs.promises.writeFile(directory, stringifiedData);
+
+  fs.writeFile(directory, stringifiedData, 'utf8', (err) => {
     if (err) throw err;
   });
 }
 
-export async function isWriteable(directory: string): Promise<boolean> {
+export function makeDir(
+  root: string,
+  options = { recursive: true }
+): Promise<string | undefined> {
+  return fs.promises.mkdir(root, options);
+}
+
+export async function fileExists(filePath: string) {
   try {
-    await fs.promises.access(directory, (fs.constants || fs).W_OK);
+    await fs.promises.access(filePath);
     return true;
-  } catch (err) {
+  } catch (error) {
     return false;
   }
 }

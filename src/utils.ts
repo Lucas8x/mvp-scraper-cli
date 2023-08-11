@@ -1,6 +1,5 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
-import fs from 'fs';
 
 import { NoHtmlPage } from './errors';
 
@@ -8,9 +7,6 @@ export async function fetchListPageHtml(
   pageNumber: number
 ): Promise<string | undefined> {
   try {
-    return fs.readFileSync('G:/_CODING_/RAGNAROK/node-version/a.txt', {
-      encoding: 'utf8',
-    });
     if (!pageNumber) throw new Error('Page number is required');
     const url = `https://www.divine-pride.net/database/monster?Flag=4&Page=${pageNumber}`;
     const { data } = await axios.get(url);
