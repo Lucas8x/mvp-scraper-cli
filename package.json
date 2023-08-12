@@ -10,7 +10,7 @@
     "build": "npx tsc"
   },
   "bin": {
-    "mvpscrap": "./build/src/index.js"
+    "mvp-scrap": "./build/src/index.js"
   },
   "files": [
     "build/"
