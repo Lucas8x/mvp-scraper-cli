@@ -1,7 +1,4 @@
-import DivinePride, {
-  GetMonsterResponse,
-  Stats,
-} from 'divine-pride-api-wrapper';
+import DivinePride, { GetMonsterResponse } from 'divine-pride-api-wrapper';
 import { createSpinner } from 'nanospinner';
 import cluster from 'node:cluster';
 import { availableParallelism } from 'node:os';

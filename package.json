@@ -1,7 +1,7 @@
 {
   "name": "mvp-scraper",
   "version": "0.1.0",
-  "description": "extract mvp info from divinepride",
+  "description": "cli for extracting information about ragnarok mvp monsters",
   "main": "build/src/index.js",
   "type": "module",
   "scripts": {
@@ -17,6 +17,10 @@
   ],
   "engines": {
     "node": ">= 16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lucas8x/mvp-scraper-cli"
   },
   "author": "lucas8x",
   "license": "MIT",
