@@ -25,7 +25,7 @@
     "chalk": "^5.2.0",
     "cheerio": "^1.0.0-rc.12",
     "commander": "^11.0.0",
-    "divine-pride-api-wrapper": "^0.1.10",
+    "divine-pride-api-wrapper": "^0.1.11",
     "dotenv": "^16.3.0",
     "nanospinner": "^1.1.0",
     "prompts": "^2.4.2"

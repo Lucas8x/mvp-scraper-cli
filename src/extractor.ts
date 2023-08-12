@@ -16,29 +16,20 @@ import {
 import { FailedGetMvpData, NoHtmlPage } from './errors';
 import { filterMvp } from './filter';
 import { makeDir, saveJSON } from './helpers';
-import type { ExtractorConfig } from './types';
 import { extractIdsFromHtml, fetchListPageHtml } from './utils';
 
 const numCPUs = availableParallelism();
 
 export class Extractor {
-  private api: DivinePride;
-
   constructor(
-    private divinePrideApiKey: string,
+    private api: DivinePride,
     private downloadSprites = false,
     private downloadAnimatedSprites = false,
     private downloadMapImages = false,
     private ignoreEmptySpawns = false,
     private useFilter = false,
     private desiredStats = [] as Partial<Stats>
-  ) {
-    if (!divinePrideApiKey) {
-      console.error('Divine pride api not found, aborting...');
-      process.exit(1);
-    }
-    this.api = new DivinePride(divinePrideApiKey);
-  }
+  ) {}
 
   private async getMvpData(
     id: number
