@@ -2,18 +2,19 @@
   "name": "mvp-scraper",
   "version": "0.1.0",
   "description": "cli for extracting information about ragnarok mvp monsters",
-  "main": "build/src/index.js",
+  "main": "dist/src/index.js",
   "type": "module",
   "scripts": {
-    "start": "node --es-module-specifier-resolution=node --no-warnings build/src/index.js",
+    "start": "node --es-module-specifier-resolution=node --no-warnings dist/src/index.js",
     "cli": "tsx watch src/index.ts",
+    "prepack": "npm run build",
     "build": "npx tsc"
   },
   "bin": {
-    "mvp-scrap": "./build/src/index.js"
+    "mvp-scrap": "./dist/src/index.js"
   },
   "files": [
-    "build/"
+    "dist/"
   ],
   "engines": {
     "node": ">= 16"
@@ -22,6 +23,10 @@
     "type": "git",
     "url": "https://github.com/Lucas8x/mvp-scraper-cli"
   },
+  "bugs": {
+    "url": "https://github.com/Lucas8x/mvp-scraper-cli/issues"
+  },
+  "homepage": "https://github.com/Lucas8x/mvp-scraper-cli#readme",
   "author": "lucas8x",
   "license": "MIT",
   "dependencies": {
@@ -30,7 +35,6 @@
     "cheerio": "^1.0.0-rc.12",
     "commander": "^11.0.0",
     "divine-pride-api-wrapper": "^0.1.11",
-    "dotenv": "^16.3.0",
     "nanospinner": "^1.1.0",
     "prompts": "^2.4.2"
   },

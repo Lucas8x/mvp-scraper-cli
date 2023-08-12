@@ -1,15 +1,15 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "./build",
+    "outDir": "./dist",
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
     "noImplicitAny": false,
-    "skipLibCheck": true
-  }
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "exclude": ["node_modules"]
 }

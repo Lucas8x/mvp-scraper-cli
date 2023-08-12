@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander';
 import DivinePride, { ServerTypes, Servers } from 'divine-pride-api-wrapper';
 import prompts, { PromptObject } from 'prompts';
