@@ -8,8 +8,8 @@ CLI for extracting information about ragnarok mvp monsters
 - [x] Download mvp sprite
 - [x] Download animated mvp sprite
 - [x] Download respawn map image
-- [ ] Filter mvp stats
 - [x] Can ignore mvp with no respawn
+- [x] Filter mvp stats
 - [x] Easily change language of mvps names
 
 ## Requirements

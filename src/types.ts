@@ -1,5 +1,3 @@
-import type { Stats } from 'divine-pride-api-wrapper/build/types';
-
 export interface ExtractorConfig {
   divinePrideApiKey: string;
   downloadSprites?: boolean;
@@ -7,5 +5,5 @@ export interface ExtractorConfig {
   downloadMapImages?: boolean;
   ignoreEmptySpawns?: boolean;
   useFilter?: boolean;
-  desiredStats?: Partial<Stats>;
+  desiredStats?: string[];
 }

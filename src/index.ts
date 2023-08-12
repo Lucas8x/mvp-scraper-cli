@@ -1,11 +1,10 @@
 import { Command } from 'commander';
 import DivinePride, { ServerTypes, Servers } from 'divine-pride-api-wrapper';
 import prompts, { PromptObject } from 'prompts';
-
+import packageJson from '../package.json' assert { type: 'json' };
+import { StatsList } from './constants';
 import { Extractor } from './extractor';
 import type { ExtractorConfig } from './types';
-
-import packageJson from '../package.json' assert { type: 'json' };
 
 let outputPath: string = process.cwd();
 
@@ -54,23 +53,23 @@ async function interactiveCLI(): Promise<Config> {
       active: 'yes',
       inactive: 'no',
     },
-    {
-      type: 'toggle',
-      name: 'changeServer',
-      message: 'Would you like to change server? (default: iRO)',
-      initial: false,
-      active: 'yes',
-      inactive: 'no',
-    },
   ];
 
   const result = await prompts(questions);
-  let server: ServerTypes = 'iRO';
 
-  if (result.changeServer) {
-    const { modServer } = await prompts({
+  const { changeServer } = await prompts({
+    type: 'toggle',
+    name: 'changeServer',
+    message: 'Would you like to change server? (default: iRO)',
+    initial: false,
+    active: 'yes',
+    inactive: 'no',
+  });
+
+  if (changeServer) {
+    var { server } = await prompts({
       type: 'select',
-      name: 'modServer',
+      name: 'server',
       message: 'Which server?',
       choices: Servers.map((server) => ({
         title: server,
@@ -78,29 +77,30 @@ async function interactiveCLI(): Promise<Config> {
       })),
       initial: 4,
     });
-    server = modServer;
   }
 
-  /*if (result.changeLanguage) {
-  }
+  //if (result.changeLanguage) {}
 
   const { useFilter } = await prompts({
     type: 'toggle',
     name: 'useFilter',
-    message: 'Want to filter some mvp stats?',
+    message: 'Want to filter mvp?',
     initial: false,
     active: 'yes',
     inactive: 'no',
   });
 
   if (useFilter) {
-    const { stats } = await prompts({
+    var { desiredStats } = await prompts({
       type: 'multiselect',
-      name: 'stats',
+      name: 'desiredStats',
       message: 'Which stats do you want to keep?',
-      choices: [{ title: '', value: '' }],
+      choices: StatsList.map((stats) => ({
+        title: stats,
+        value: stats,
+      })),
     });
-  }*/
+  }
 
   return {
     divinePrideApiKey: result.apiKey,
@@ -108,8 +108,8 @@ async function interactiveCLI(): Promise<Config> {
     downloadAnimatedSprites: result.downloadAnimatedSprites,
     downloadMapImages: result.downloadMapImages,
     ignoreEmptySpawns: result.ignoreEmptySpawns,
-    useFilter: [].length > 0,
-    desiredStats: undefined,
+    useFilter,
+    desiredStats,
     server,
   };
 }
@@ -123,8 +123,9 @@ function cli(): Config {
     .option('-as, --anim-sprites', 'Save animated sprites', false)
     .option('-m, --map', 'Save map images', false)
     .option('-i, --ignore', 'Ignore mvp with no spawn locations', false)
-    .option('-sv, --server', 'Data from which server', 'iRO')
-    .option('-f, --filter <stats...>', 'Filter mvp stats', [])
+    .option('-sv, --server <server>', 'Data from which server', 'iRO')
+    .option('-f, --filter', 'Filter mvp', false)
+    .option('--stats <stats...>', 'Filter mvp stats', [])
     .parse(process.argv);
 
   const options = program.opts();
@@ -132,6 +133,12 @@ function cli(): Config {
   if (!options.output) {
     console.log('\nPlease specify the project directory:\n');
     process.exit(1);
+  }
+
+  if (!Servers.includes(options.server)) {
+    console.warn(
+      "The defined server isn't on valid server list, the api will probably return data from iRO."
+    );
   }
 
   outputPath = options.output;
@@ -142,8 +149,8 @@ function cli(): Config {
     downloadAnimatedSprites: options.animSprites,
     downloadMapImages: options.map,
     ignoreEmptySpawns: options.ignore,
-    useFilter: options.filter.length > 0,
-    desiredStats: options.filter,
+    useFilter: options.filter,
+    desiredStats: options.stats,
     server: options.server,
   };
 }

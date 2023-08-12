@@ -28,7 +28,7 @@ export class Extractor {
     private downloadMapImages = false,
     private ignoreEmptySpawns = false,
     private useFilter = false,
-    private desiredStats = [] as Partial<Stats>
+    private desiredStats: string[] = []
   ) {}
 
   private async getMvpData(
@@ -42,12 +42,14 @@ export class Extractor {
 
       if (this.useFilter) {
         // @ts-ignore
-        data = filterMvp(data);
+        data = filterMvp(data, this.desiredStats);
       }
 
       return data;
     } catch (error) {
-      throw new FailedGetMvpData(String(error));
+      throw new FailedGetMvpData(
+        error instanceof Error ? error.message : String(error)
+      );
     }
   }
 
@@ -102,16 +104,15 @@ export class Extractor {
       if (!ids || idsLength === 0) {
         throw new Error('No mvp ids');
       }
-
       const mvpsData: Array<Partial<GetMonsterResponse>> = [];
       for (const [index, id] of ids.entries()) {
         const data = await this.getMvpData(Number(id));
-        if (!data) {
-          continue;
-        }
         spinner.update({
           text: `[${index + 1}/${idsLength}] Extracting mvps...`,
         });
+        if (!data) {
+          continue;
+        }
         mvpsData.push(data);
       }
 

@@ -4,14 +4,16 @@ import type {
   Stats,
 } from 'divine-pride-api-wrapper';
 
-function filterMaps(maps: Spawn[]): Array<Partial<Spawn | undefined>> {
-  return maps.map(({ mapname, respawnTime }) => {
-    if (respawnTime !== 0) return;
-    return {
-      mapname,
-      respawnTime,
-    };
-  });
+function filterMaps(maps: Spawn[]): Partial<Spawn>[] {
+  const filteredMaps = maps
+    .filter(({ respawnTime }) => respawnTime >= 0)
+    .map(({ mapname, respawnTime }) => {
+      return {
+        mapname,
+        respawnTime,
+      };
+    });
+  return filteredMaps;
 }
 
 function filterStats(
@@ -28,12 +30,15 @@ function filterStats(
     : stats;
 }
 
-export function filterMvp(mvp: GetMonsterResponse) {
+export function filterMvp(
+  mvp: GetMonsterResponse,
+  desiredStats: string[] = []
+) {
   return {
     id: mvp.id,
-    dbname: mvp['dbname'],
+    dbname: mvp.dbname,
     name: mvp.name,
     spawn: filterMaps(mvp.spawn),
-    stats: filterStats(mvp.stats),
+    stats: filterStats(mvp.stats, desiredStats),
   };
 }
