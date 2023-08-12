@@ -119,7 +119,7 @@ function cli(): Config {
     .version(packageJson.version)
     .requiredOption('-k, --key <key>', 'Your divine pride api key')
     .requiredOption('-o, --output <output>', 'Where to write output')
-    .option('-s, --sprites', 'Download sprites', false)
+    .option('-s, --sprites', 'Save sprites', false)
     .option('-as, --anim-sprites', 'Save animated sprites', false)
     .option('-m, --map', 'Save map images', false)
     .option('-i, --ignore', 'Ignore mvp with no spawn locations', false)
