@@ -11,6 +11,7 @@ CLI for extracting information about ragnarok mvp monsters
 - [x] Can ignore mvp with no respawn
 - [x] Filter mvp stats
 - [x] Easily change language of mvps names
+- [ ] Pre-Renewal support
 
 ## Requirements
 
