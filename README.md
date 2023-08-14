@@ -14,15 +14,15 @@ CLI for extracting information about ragnarok mvp monsters
 
 ## Requirements
 
-- [NodeJS](https://www.python.org/)
 - [Divine Pride API Key](https://www.divine-pride.net/account)
+  - Create an account and your key will be available on the profile page
 
 ## Usage
 
 ### Interactive
 
 ```shell
-npx mvp-scrap@latest
+npx mvp-scraper@latest
 ```
 
 ### Non-interactive
