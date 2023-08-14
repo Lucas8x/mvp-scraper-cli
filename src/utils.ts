@@ -1,7 +1,7 @@
 import * as cheerio from 'cheerio';
 import axios from 'axios';
 
-import { NoHtmlPage } from './errors';
+import { NoHtmlPage } from './errors.js';
 
 export async function fetchListPageHtml(
   pageNumber: number

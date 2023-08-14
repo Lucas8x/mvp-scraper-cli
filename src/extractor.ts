@@ -4,16 +4,16 @@ import cluster from 'node:cluster';
 import { availableParallelism } from 'node:os';
 import path from 'path';
 
-import { constants } from './constants';
+import { constants } from './constants.js';
 import {
   downloadAnimatedMvpSprite,
   downloadMapImages,
   downloadMvpSprite,
-} from './download';
-import { FailedGetMvpData, NoHtmlPage } from './errors';
-import { filterMvp } from './filter';
-import { makeDir, saveJSON } from './helpers';
-import { extractIdsFromHtml, fetchListPageHtml } from './utils';
+} from './download.js';
+import { FailedGetMvpData, NoHtmlPage } from './errors.js';
+import { filterMvp } from './filter.js';
+import { makeDir, saveJSON } from './helpers.js';
+import { extractIdsFromHtml, fetchListPageHtml } from './utils.js';
 
 const numCPUs = availableParallelism();
 

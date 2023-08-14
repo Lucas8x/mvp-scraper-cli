@@ -1,15 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 
-import { axiosInstance } from './axios';
-import { constants } from './constants';
+import { axiosInstance } from './axios.js';
+import { constants } from './constants.js';
 import {
   FailedAnimatedSpriteDownload,
   FailedMapImageDownload,
   FailedSpriteDownload,
   NoImageData,
-} from './errors';
-import { fileExists } from './helpers';
+} from './errors.js';
+import { fileExists } from './helpers.js';
 
 async function downloadImage(url: string, filePath: string) {
   try {
