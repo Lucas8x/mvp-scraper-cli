@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
-import axios from 'axios';
 
+import { axiosInstance } from './axios.js';
 import { NoHtmlPage } from './errors.js';
 
 export async function fetchListPageHtml(
@@ -9,7 +9,7 @@ export async function fetchListPageHtml(
   try {
     if (!pageNumber) throw new Error('Page number is required');
     const url = `https://www.divine-pride.net/database/monster?Flag=4&Page=${pageNumber}`;
-    const { data } = await axios.get(url);
+    const { data } = await axiosInstance.get(url);
     return data;
   } catch (error) {
     throw new NoHtmlPage(`Couldn't fetch list page number: ${pageNumber}`);
