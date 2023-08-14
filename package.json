@@ -33,7 +33,7 @@
     "chalk": "^5.2.0",
     "cheerio": "^1.0.0-rc.12",
     "commander": "^11.0.0",
-    "divine-pride-api-wrapper": "^0.1.11",
+    "divine-pride-api-wrapper": "^0.1.13",
     "nanospinner": "^1.1.0",
     "prompts": "^2.4.2"
   },
