@@ -13,7 +13,6 @@ import { fileExists } from './helpers.js';
 
 async function downloadImage(url: string, filePath: string) {
   try {
-    await new Promise((r) => setTimeout(r, 2000));
     if (await fileExists(filePath)) {
       return;
     }
