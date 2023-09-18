@@ -156,7 +156,7 @@ function cli(): Config {
   };
 }
 
-export async function main() {
+async function main() {
   const hasArgs = process.argv.length > 2;
   const {
     divinePrideApiKey,

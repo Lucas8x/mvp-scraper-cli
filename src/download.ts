@@ -80,11 +80,11 @@ export async function downloadMapImages(
   mapName: string,
   outputPath: string
 ): Promise<void> {
+  const originalMapUrl = `https://www.divine-pride.net/img/map/original/${mapName}`;
+  const rawMapUrl = `https://www.divine-pride.net/img/map/raw/${mapName}`;
+
   const urlFileName = `${mapName}.png`;
   const rawFileName = `${mapName}_raw.png`;
-
-  const originalMapUrl = `https://www.divine-pride.net/img/map/original/${urlFileName}`;
-  const rawMapUrl = `https://www.divine-pride.net/img/map/raw/${urlFileName}`;
 
   const originalFilePath = path.join(
     outputPath,
