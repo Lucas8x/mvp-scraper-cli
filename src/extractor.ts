@@ -2,18 +2,18 @@ import DivinePride, { GetMonsterResponse } from 'divine-pride-api-wrapper';
 import { createSpinner } from 'nanospinner';
 import cluster from 'node:cluster';
 import { availableParallelism } from 'node:os';
-import path from 'path';
+import path from 'node:path';
 
-import { constants } from './constants.js';
+import { constants } from './constants';
 import {
   downloadAnimatedMvpSprite,
   downloadMapImages,
   downloadMvpSprite,
-} from './download.js';
-import { FailedGetMvpData, NoHtmlPage } from './errors.js';
-import { filterMvp } from './filter.js';
-import { makeDir, saveJSON } from './helpers.js';
-import { extractIdsFromHtml, fetchListPageHtml } from './utils.js';
+} from './download';
+import { FailedGetMvpData, NoHtmlPage } from './errors';
+import { filterMvp } from './filter';
+import { makeDir, saveJSON } from './helpers';
+import { extractIdsFromHtml, fetchListPageHtml } from './utils';
 
 const numCPUs = availableParallelism();
 

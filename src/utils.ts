@@ -1,13 +1,15 @@
 import * as cheerio from 'cheerio';
 
-import { axiosInstance } from './axios.js';
-import { NoHtmlPage } from './errors.js';
+import { axiosInstance } from './axios';
+import { NoHtmlPage } from './errors';
 
 export async function fetchListPageHtml(
   pageNumber: number
 ): Promise<string | undefined> {
   try {
     if (!pageNumber) throw new Error('Page number is required');
+    if (pageNumber < 0)
+      throw new Error('Page number must be greater than zero');
     const url = `https://www.divine-pride.net/database/monster?Flag=4&Page=${pageNumber}`;
     const { data } = await axiosInstance.get(url);
     return data;

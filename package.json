@@ -1,13 +1,14 @@
 {
   "name": "mvp-scraper",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "cli for extracting information about ragnarok mvp monsters",
   "type": "module",
   "scripts": {
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "build": "npx tsup ./src/index.ts",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test": "jest"
   },
   "bin": "./dist/index.js",
   "files": [
@@ -33,13 +34,17 @@
     "commander": "^11.0.0",
     "divine-pride-api-wrapper": "^0.1.13",
     "nanospinner": "^1.1.0",
+    "nock": "^13.3.3",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.5",
     "@types/node": "^20.3.1",
     "@types/prompts": "^2.4.4",
     "eslint": "^8.43.0",
+    "jest": "^29.7.0",
     "prettier": "^2.8.8",
+    "ts-jest": "^29.1.1",
     "tsup": "^7.2.0",
     "tsx": "^3.12.7",
     "typescript": "^5.1.3"

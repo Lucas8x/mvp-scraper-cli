@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 
 export function saveJSON(directory: string, data: any) {
   const stringifiedData = JSON.stringify(data, null, 2);

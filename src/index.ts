@@ -2,10 +2,12 @@
 import { Command } from 'commander';
 import DivinePride, { ServerTypes, Servers } from 'divine-pride-api-wrapper';
 import prompts, { PromptObject } from 'prompts';
+
 import packageJson from '../package.json';
-import { StatsList } from './constants.js';
-import { Extractor } from './extractor.js';
-import type { ExtractorConfig } from './types.js';
+
+import { StatsList } from './constants';
+import { Extractor } from './extractor';
+import type { ExtractorConfig } from './types';
 
 let outputPath: string = process.cwd();
 
