@@ -199,7 +199,8 @@ export class Extractor {
         mvpsData.push(data);
       }
 
-      const jsonPath = path.join(finalPath, constants.jsonFile);
+      const jsonFilename = `${this.api.getServer()}.json`;
+      const jsonPath = path.join(finalPath, jsonFilename);
       saveJSON(jsonPath, mvpsData);
 
       spinner.success({

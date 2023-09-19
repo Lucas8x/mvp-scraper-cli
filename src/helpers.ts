@@ -2,7 +2,6 @@ import fs from 'node:fs';
 
 export function saveJSON(directory: string, data: any) {
   const stringifiedData = JSON.stringify(data, null, 2);
-  fs.promises.writeFile(directory, stringifiedData);
 
   fs.writeFile(directory, stringifiedData, 'utf8', (err) => {
     if (err) throw err;
