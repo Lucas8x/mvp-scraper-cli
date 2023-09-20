@@ -6,7 +6,7 @@ import type {
 
 function filterMaps(maps: Spawn[]): Partial<Spawn>[] {
   const filteredMaps = maps
-    .filter(({ respawnTime }) => respawnTime >= 0)
+    .filter(({ respawnTime }) => respawnTime > 0)
     .map(({ mapname, respawnTime }) => {
       return {
         mapname,

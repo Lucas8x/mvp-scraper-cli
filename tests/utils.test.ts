@@ -1,7 +1,6 @@
 import nock from 'nock';
 import fs from 'node:fs';
 import path from 'node:path';
-import assert from 'node:assert';
 
 import { fetchListPageHtml, extractIdsFromHtml } from '../src/utils';
 
