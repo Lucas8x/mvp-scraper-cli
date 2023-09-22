@@ -1,4 +1,4 @@
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { axiosInstance } from './axios';
@@ -28,7 +28,7 @@ async function downloadImage(url: string, filePath: string) {
     }
 
     const image = Buffer.from(data, 'binary');
-    await fs.promises.writeFile(filePath, image);
+    await fs.writeFile(filePath, image);
   } catch (error) {
     throw error;
   }

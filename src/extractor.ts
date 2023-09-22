@@ -201,7 +201,7 @@ export class Extractor {
 
       const jsonFilename = `${this.api.getServer()}.json`;
       const jsonPath = path.join(finalPath, jsonFilename);
-      saveJSON(jsonPath, mvpsData);
+      await saveJSON(jsonPath, mvpsData);
 
       spinner.success({
         text: 'Successfully extracted mvps',
