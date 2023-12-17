@@ -29,7 +29,15 @@ npx mvp-scraper@latest
 ### Non-interactive
 
 ```shell
-mvp-scrap [options]
+mvp-scraper -k DIVINE_PRIDE_API_KEY -sv SERVER -o OUTPUT_PATH
+```
+
+```shell
+mvp-scraper -k a1b2c3d4 -sv bRO -o C:\ragnarok
+```
+
+```shell
+mvp-scraper [options]
 
 Options:
   -v, --version
@@ -37,6 +45,9 @@ Options:
 
   -k, --key <key>
     Your divine pride api key
+
+  -sv, --server
+    Define from which server the data will come
 
   -o, --output <output>
     Where to write output
@@ -53,6 +64,8 @@ Options:
   -i, --ignore
     Ignore mvp with no spawn locations
 
-  -sv, --server
-    Define data from which server
 ```
+
+## License
+
+[MIT](LICENSE)
