@@ -2,7 +2,11 @@ import nock from 'nock';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { fetchListPageHtml, extractIdsFromHtml } from '../src/utils';
+import {
+  fetchListPageHtml,
+  extractIdsFromHtml,
+  getTotalPagination,
+} from '../src/utils';
 
 const HTMLPageSample = fs.readFileSync(
   path.join(__dirname, './sample/listPage.html'),
@@ -57,6 +61,17 @@ describe('Utils', () => {
       expect(String(e)).toMatch(expectedErrorMessage)
     );
     scope.done();
+  });
+
+  it('Should return the total pagination number', () => {
+    expect.assertions(1);
+    const total = getTotalPagination(HTMLPageSample);
+    expect(total).toBe(2);
+  });
+
+  it('Should return 1 on fail extract the total pagination number', () => {
+    expect.assertions(1);
+    expect(getTotalPagination('<html><head></head></html>')).toBe(1);
   });
 
   it('Should throw error when page number is undefined', async () => {

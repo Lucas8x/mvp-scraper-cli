@@ -1,7 +1,37 @@
+import { URL } from 'node:url';
 import * as cheerio from 'cheerio';
 
 import { axiosInstance } from './axios';
 import { NoHtmlPage } from './errors';
+
+export function getTotalPagination(html: string): number {
+  let pageNumber = 1;
+
+  try {
+    if (!html) throw new Error('Html is required.');
+
+    const $ = cheerio.load(html, null, false);
+    const items = $('.page-link');
+
+    items.each((_, element) => {
+      const text = $(element).text();
+      const isLastItem = text && text.toLowerCase() === 'last';
+
+      if (isLastItem) {
+        const href = $(element).attr('href').toLowerCase();
+        const number = new URL(
+          href,
+          'https://www.divine-pride.net'
+        ).searchParams.get('page');
+        pageNumber = parseInt(number);
+      }
+    });
+
+    return pageNumber;
+  } catch (error) {
+    return pageNumber;
+  }
+}
 
 export async function fetchListPageHtml(
   pageNumber: number

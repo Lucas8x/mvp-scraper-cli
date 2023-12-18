@@ -13,7 +13,11 @@ import {
 import { FailedGetMvpData, NoHtmlPage } from './errors';
 import { filterMvp } from './filter';
 import { makeDir, saveJSON } from './helpers';
-import { extractIdsFromHtml, fetchListPageHtml } from './utils';
+import {
+  extractIdsFromHtml,
+  fetchListPageHtml,
+  getTotalPagination,
+} from './utils';
 
 const numCPUs = availableParallelism();
 
@@ -55,11 +59,12 @@ export class Extractor {
 
     try {
       let ids: string[] = [];
-      const totalPages = 2; //TODO: detect on page
+      let totalPages = 2;
 
       for (let i = 1; i <= totalPages; i++) {
         const pageHtml = await fetchListPageHtml(i);
         if (!pageHtml) return;
+        if (i === 1) totalPages = getTotalPagination(pageHtml);
 
         const pageIds = extractIdsFromHtml(pageHtml);
         ids = ids.concat(pageIds);
@@ -178,7 +183,7 @@ export class Extractor {
    * @param {string} finalPath - where the output folder will be created
    * @memberof Extractor
    */
-  private async extract(finalPath: string) {
+  private async extractMvpsData() {
     const spinner = createSpinner('Extracting mvps...').start();
 
     try {
@@ -198,10 +203,6 @@ export class Extractor {
         if (!data) continue;
         mvpsData.push(data);
       }
-
-      const jsonFilename = `${this.api.getServer()}.json`;
-      const jsonPath = path.join(finalPath, jsonFilename);
-      await saveJSON(jsonPath, mvpsData);
 
       spinner.success({
         text: 'Successfully extracted mvps',
@@ -239,16 +240,26 @@ export class Extractor {
       const finalPath = path.join(root, constants.outputFolder);
 
       await makeDir(finalPath);
-      const mvpsData = await this.extract(finalPath);
+      const mvpsData = await this.extractMvpsData();
+
+      if (!mvpsData || mvpsData.length === 0) {
+        throw new Error(`Couldn't find any mvps data ${this.api.getServer()}.`);
+      }
+
+      const jsonFilename = `${this.api.getServer()}.json`;
+      const jsonPath = path.join(finalPath, jsonFilename);
+      await saveJSON(jsonPath, mvpsData);
 
       if (this.downloadSprites) {
         await makeDir(path.join(finalPath, constants.spritesFolder));
         await this.downloadAllSprites(mvpsData, finalPath);
       }
+
       if (this.downloadAnimatedSprites) {
         await makeDir(path.join(finalPath, constants.animatedSpritesFolder));
         await this.downloadAllAnimatedSprites(mvpsData, finalPath);
       }
+
       if (this.downloadMapImages) {
         await makeDir(path.join(finalPath, constants.mapsFolder));
         await this.downloadAllMapImages(mvpsData, finalPath);
